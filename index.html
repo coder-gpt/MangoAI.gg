@@ -1,12 +1,13 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TalkUp</title>
 
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-  
+  <!-- SVG Favicon with Dark Mode Adaptation -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><style>rect { fill: %235865f2; } @media (prefers-color-scheme: dark) { rect { fill: %2323a55a; } }</style><rect width='100' height='100' rx='25'/><path d='M30 35 C30 25 40 20 50 20 C60 20 70 25 70 35 C70 45 60 50 50 50 C45 50 40 52 35 56 C37 50 30 45 30 35 Z' fill='white'/></svg>">
+
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <style>
     * { 
@@ -22,33 +23,26 @@
       height: 100vh; 
       display: flex; 
       overflow: hidden; 
+      user-select: none;
     }
 
     .hidden { display: none !important; }
 
+    /* SVG Icon Utility */
+    .icon {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
     /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes modalScale { from { opacity: 0; transform: scale(0.92) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    @keyframes messageSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-    @keyframes modalScale {
-      from { opacity: 0; transform: scale(0.92) translateY(-10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    @keyframes messageSlide {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(35, 165, 90, 0.7); }
-      70% { box-shadow: 0 0 0 12px rgba(35, 165, 90, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(35, 165, 90, 0); }
-    }
-
-    /* Modal Overlays */
+    /* Modals & Overlays */
     .screen-overlay { 
       position: fixed; 
       inset: 0; 
@@ -59,7 +53,7 @@
       align-items: center; 
       z-index: 100; 
       padding: 20px; 
-      animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .card { 
@@ -69,7 +63,7 @@
       width: 100%; 
       max-width: 440px; 
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6); 
-      animation: modalScale 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: modalScale 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .card-title { font-size: 22px; font-weight: bold; color: #f2f3f5; text-align: center; margin-bottom: 6px; }
@@ -100,11 +94,10 @@
       border-radius: 6px; 
       color: #f2f3f5; 
       outline: none; 
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: border-color 0.2s ease;
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
       border-color: #5865f2; 
-      box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.2);
     }
 
     .btn { 
@@ -116,22 +109,22 @@
       border-radius: 6px; 
       font-weight: 600; 
       cursor: pointer; 
-      transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease; 
+      transition: background 0.2s ease; 
       margin-top: 4px; 
     }
-    .btn:hover { background: #4752c4; transform: translateY(-1px); }
-    .btn:active { transform: translateY(0); }
+    .btn:hover { background: #4752c4; }
     .btn-secondary { background: #4e5058; color: white; margin-top: 8px; }
     .btn-secondary:hover { background: #6d6f78; }
     .btn-danger { background: #da373c; }
     .btn-danger:hover { background: #a12828; }
 
-    .status-msg { font-size: 12px; margin-bottom: 10px; text-align: center; min-height: 16px; transition: color 0.2s ease; }
+    .status-msg { font-size: 12px; margin-bottom: 10px; text-align: center; min-height: 16px; }
     .status-msg.error { color: #fa777c; }
     .status-msg.info { color: #5865f2; }
 
-    /* App Layout */
+    /* App Main Layout */
     #app-screen { display: flex; width: 100vw; height: 100vh; animation: fadeIn 0.3s ease; }
+    
     .servers-sidebar { width: 72px; background: #1e1f22; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .server-icon { 
       width: 48px; 
@@ -143,20 +136,19 @@
       justify-content: center; 
       font-weight: bold; 
       cursor: pointer; 
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+      transition: all 0.2s ease; 
       color: #dbdee1; 
       position: relative; 
     }
-    .server-icon:hover, .server-icon.active { border-radius: 16px; background: #5865f2; color: white; transform: scale(1.05); }
+    .server-icon:hover, .server-icon.active { border-radius: 16px; background: #5865f2; color: white; }
     .add-server-btn { background: #313338; color: #23a55a; }
     .add-server-btn:hover { background: #23a55a !important; color: white !important; }
 
     .channels-sidebar { width: 240px; background: #2b2d31; display: flex; flex-direction: column; }
-    .server-header { height: 48px; padding: 0 16px; border-bottom: 1px solid #1f2023; display: flex; align-items: center; justify-content: space-between; font-weight: bold; color: #f2f3f5; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .server-header { height: 48px; padding: 0 16px; border-bottom: 1px solid #1f2023; display: flex; align-items: center; justify-content: space-between; font-weight: bold; color: #f2f3f5; }
 
     .category-container { padding: 12px 8px; overflow-y: auto; flex: 1; }
-    .category-header { display: flex; justify-content: space-between; align-items: center; color: #949ba4; font-size: 11px; font-weight: bold; padding: 6px 4px; text-transform: uppercase; transition: color 0.15s ease; }
-    .category-header:hover { color: #dbdee1; }
+    .category-header { display: flex; justify-content: space-between; align-items: center; color: #949ba4; font-size: 11px; font-weight: bold; padding: 6px 4px; text-transform: uppercase; }
 
     .channel-item { 
       display: flex; 
@@ -168,53 +160,54 @@
       cursor: pointer; 
       margin-bottom: 2px; 
       font-size: 14px; 
-      transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
     }
-    .channel-item:hover { background: rgba(255, 255, 255, 0.05); color: #f2f3f5; transform: translateX(2px); }
+    .channel-item:hover { background: rgba(255, 255, 255, 0.05); color: #f2f3f5; }
     .channel-item.active { background: rgba(255, 255, 255, 0.08); color: #f2f3f5; font-weight: 500; }
-    .channel-name-wrapper { display: flex; align-items: center; gap: 6px; }
+    .channel-name-wrapper { display: flex; align-items: center; gap: 8px; }
 
-    .action-icon { cursor: pointer; font-size: 14px; color: #949ba4; opacity: 0.7; transition: opacity 0.15s ease, color 0.15s ease, transform 0.15s ease; }
-    .action-icon:hover { color: #f2f3f5; opacity: 1; transform: scale(1.15); }
+    .action-icon { cursor: pointer; color: #949ba4; display: flex; align-items: center; justify-content: center; transition: color 0.15s ease; }
+    .action-icon:hover { color: #f2f3f5; }
 
+    /* User Footer */
     .user-footer { height: 52px; background: #232428; padding: 0 8px; display: flex; align-items: center; justify-content: space-between; }
-    .user-info { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 4px 6px; border-radius: 6px; transition: background 0.15s ease; }
+    .user-info { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 4px 6px; border-radius: 6px; }
     .user-info:hover { background: rgba(255,255,255,0.06); }
-    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #5865f2; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: white; position: relative; transition: background 0.2s ease; }
-    .status-indicator { width: 10px; height: 10px; border-radius: 50%; position: absolute; bottom: 0; right: 0; border: 2px solid #232428; transition: background 0.2s ease; }
+    
+    .avatar { 
+      width: 32px; 
+      height: 32px; 
+      border-radius: 50%; 
+      background: #5865f2; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-weight: bold; 
+      font-size: 14px; 
+      color: white; 
+      position: relative; 
+      background-size: cover; 
+      background-position: center;
+    }
+    .status-indicator { width: 10px; height: 10px; border-radius: 50%; position: absolute; bottom: 0; right: 0; border: 2px solid #232428; }
     .status-online { background: #23a55a; }
     .status-idle { background: #f0b232; }
     .status-dnd { background: #f23f43; }
 
+    /* Chat Area */
     .chat-area { flex: 1; background: #313338; display: flex; flex-direction: column; }
     .chat-header { height: 48px; border-bottom: 1px solid #26282c; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-weight: bold; color: #f2f3f5; }
-    .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-    .chat-message-item { animation: messageSlide 0.2s cubic-bezier(0, 0, 0.2, 1); }
+    .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .chat-message-item { animation: messageSlide 0.15s cubic-bezier(0, 0, 0.2, 1); display: flex; gap: 12px; align-items: flex-start; }
     .chat-input-wrapper { padding: 0 16px 24px; }
-    .chat-input { width: 100%; padding: 12px; background: #383a40; border: none; border-radius: 8px; color: #f2f3f5; outline: none; transition: background 0.2s ease, box-shadow 0.2s ease; }
-    .chat-input:focus { background: #404249; box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.3); }
+    .chat-input { width: 100%; padding: 12px; background: #383a40; border: none; border-radius: 8px; color: #f2f3f5; outline: none; }
 
-    /* Special Views & Voice */
-    .voice-room, .stage-room { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; animation: fadeIn 0.25s ease; }
-    .participants-grid { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
-    .participant-card { 
-      width: 120px; 
-      height: 120px; 
-      background: #2b2d31; 
-      border-radius: 16px; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center; 
-      gap: 8px; 
-      border: 2px solid transparent; 
-      transition: all 0.2s ease;
-    }
-    .participant-card.speaking { border-color: #23a55a; animation: pulseGlow 1.8s infinite; }
-    
-    .forum-container { padding: 16px; flex: 1; overflow-y: auto; animation: fadeIn 0.25s ease; }
-    .forum-post { background: #2b2d31; border-radius: 8px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: background 0.2s ease, transform 0.15s ease; animation: messageSlide 0.2s ease; }
-    .forum-post:hover { background: #35373c; transform: translateY(-1px); }
+    /* Friends / DM Layout */
+    .friends-nav { display: flex; gap: 16px; align-items: center; }
+    .friends-nav-btn { background: none; border: none; color: #b5bac1; font-weight: 600; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+    .friends-nav-btn:hover { background: rgba(255,255,255,0.05); color: #dbdee1; }
+    .friends-nav-btn.active { background: rgba(255,255,255,0.1); color: white; }
+    .friends-list { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .friend-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #2b2d31; border-radius: 8px; }
   </style>
 </head>
 <body>
@@ -242,6 +235,7 @@
           <input type="password" id="login-password" required placeholder="••••••••">
         </div>
         <button type="submit" class="btn">Send Verification Code</button>
+        <p style="font-size: 11px; color: #949ba4; text-align: center; margin-top: 12px;">Tip: Press <strong style="color: #5865f2;">'G'</strong> to enter as Guest</p>
       </form>
 
       <form id="signup-form" class="hidden" onsubmit="handleAuthSubmit(event, 'signup')">
@@ -258,6 +252,7 @@
           <input type="password" id="signup-password" required placeholder="••••••••">
         </div>
         <button type="submit" class="btn">Create Account & Send Code</button>
+        <p style="font-size: 11px; color: #949ba4; text-align: center; margin-top: 12px;">Tip: Press <strong style="color: #5865f2;">'G'</strong> to enter as Guest</p>
       </form>
     </div>
   </div>
@@ -286,6 +281,14 @@
       <div class="card-subtitle">Customize how you appear on TalkUp</div>
       <form onsubmit="saveProfile(event)">
         <div class="form-group">
+          <label>Profile Picture URL</label>
+          <input type="url" id="profile-avatar-input" placeholder="https://example.com/avatar.png">
+        </div>
+        <div class="form-group">
+          <label>Avatar Color (If no image)</label>
+          <input type="color" id="profile-color-input" value="#5865f2" style="height: 40px; cursor: pointer;">
+        </div>
+        <div class="form-group">
           <label>Display Status</label>
           <select id="profile-status-select">
             <option value="online">Online</option>
@@ -294,15 +297,29 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Avatar Color</label>
-          <input type="color" id="profile-color-input" value="#5865f2" style="height: 40px; cursor: pointer;">
-        </div>
-        <div class="form-group">
           <label>About Me / Bio</label>
           <textarea id="profile-bio-input" rows="3" placeholder="Tell everyone a little bit about yourself..."></textarea>
         </div>
         <button type="submit" class="btn">Save Changes</button>
         <button type="button" class="btn btn-secondary" onclick="closeModal('profile-modal')">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SERVER SETTINGS MODAL -->
+  <div id="server-settings-modal" class="screen-overlay hidden">
+    <div class="card">
+      <div class="card-title">Server Settings</div>
+      <div class="card-subtitle">Manage server options</div>
+      <form onsubmit="saveServerSettings(event)">
+        <div class="form-group">
+          <label>Server Name</label>
+          <input type="text" id="server-name-input" required>
+        </div>
+        <button type="submit" class="btn">Save Changes</button>
+        <button type="button" class="btn btn-secondary" onclick="copyInviteLink()">Copy Invite Code</button>
+        <button type="button" class="btn btn-danger" style="margin-top: 12px;" onclick="deleteCurrentServer()">Delete Server</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('server-settings-modal')">Cancel</button>
       </form>
     </div>
   </div>
@@ -316,10 +333,10 @@
         <div class="form-group">
           <label>Channel Type</label>
           <select id="channel-type-select">
-            <option value="text"># Text Channel</option>
-            <option value="voice">?? Voice Channel</option>
-            <option value="forum">?? Forum Channel</option>
-            <option value="stage">?? Stage Channel</option>
+            <option value="text">Text Channel</option>
+            <option value="voice">Voice Channel</option>
+            <option value="forum">Forum Channel</option>
+            <option value="stage">Stage Channel</option>
           </select>
         </div>
         <div class="form-group">
@@ -351,28 +368,31 @@
   <!-- MAIN APP SCREEN -->
   <div id="app-screen" class="hidden">
     <div class="servers-sidebar">
-      <div class="server-icon active" title="Home">TU</div>
+      <!-- DM / Friends Direct Home Button -->
+      <div class="server-icon" id="home-icon-btn" onclick="openHomeDirectMessages()" title="Direct Messages">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.82.49 3.53 1.35 5L2 22l5.1-1.32C8.55 21.52 10.23 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+      </div>
       <div style="width: 32px; height: 2px; background: #35363c; margin: 4px 0;"></div>
       <div id="server-list" style="display:flex; flex-direction:column; gap:8px;"></div>
       <div class="server-icon add-server-btn" onclick="createGroup('server')" title="Create Server">+</div>
-      <div class="server-icon" onclick="openModal('join-server-modal')" title="Join Server" style="color: #23a55a;">??</div>
+      <div class="server-icon" onclick="openModal('join-server-modal')" title="Join Server" style="color: #23a55a;">🔗</div>
     </div>
 
     <div class="channels-sidebar">
       <div class="server-header">
-        <span id="current-server-name">Select a Server</span>
+        <span id="current-server-name">Direct Messages</span>
         <div style="display:flex; gap: 8px;">
-          <span class="action-icon" onclick="copyInviteLink()" title="Copy Server Invite">??</span>
-          <span class="action-icon" onclick="createGroup('category')" title="Add Category">+</span>
+          <span class="action-icon" id="server-settings-btn" onclick="openModal('server-settings-modal')" title="Server Settings">⚙️</span>
+          <span class="action-icon" id="add-category-btn" onclick="createGroup('category')" title="Add Category">+</span>
         </div>
       </div>
 
       <div class="category-container" id="category-list"></div>
 
       <div class="user-footer">
-        <div class="user-info" onclick="openModal('profile-modal')">
-          <div class="user-avatar" id="user-avatar-text">
-            U
+        <div class="user-info" onclick="handleProfileClick()">
+          <div class="avatar" id="user-avatar-element">
+            <span id="user-avatar-initial">U</span>
             <div class="status-indicator status-online" id="user-status-indicator"></div>
           </div>
           <div style="display:flex; flex-direction:column;">
@@ -380,45 +400,35 @@
             <div style="font-size: 10px; color: #949ba4;" id="current-status-text">Online</div>
           </div>
         </div>
-        <span class="action-icon" onclick="logout()" title="Log Out">?</span>
+        <span class="action-icon" onclick="logout()" title="Log Out">✕</span>
       </div>
     </div>
 
     <div class="chat-area">
-      <div class="chat-header">
-        <span id="current-channel-name"># general</span>
-        <span id="channel-type-badge" style="font-size: 11px; background: #2b2d31; padding: 4px 8px; border-radius: 4px; color: #949ba4;">TEXT</span>
+      <div class="chat-header" id="chat-header-bar">
+        <span id="current-channel-name">Friends</span>
+        <span id="channel-type-badge" style="font-size: 11px; background: #2b2d31; padding: 4px 8px; border-radius: 4px; color: #949ba4;">HOME</span>
       </div>
 
-      <div id="main-content-body" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
-        <div class="chat-messages" id="chat-messages">
-          <p style="color: #949ba4;">Welcome to the start of the channel!</p>
-        </div>
-        <div class="chat-input-wrapper" id="chat-input-container">
-          <input type="text" class="chat-input" placeholder="Message #general" id="chat-input" onkeydown="handleSendMessage(event)">
-        </div>
-      </div>
+      <div id="main-content-body" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;"></div>
     </div>
   </div>
 
   <script>
-    // ==========================================
-    // EMAILJS CONFIGURATION (UPDATED PUBLIC KEY)
-    // ==========================================
+    // EmailJS Configuration
     const EMAILJS_PUBLIC_KEY  = 'd9hhZOQ9Bj1Rriwvi';
     const EMAILJS_SERVICE_ID  = 'service_c038ayg';
     const EMAILJS_TEMPLATE_ID = 'template_q00h7xw';
 
     emailjs.init(EMAILJS_PUBLIC_KEY);
 
-    // State Variables
+    // Global State
     let users = JSON.parse(localStorage.getItem('talkup_users') || '[]');
-    let currentAuthMode = 'login';
+    let currentUser = JSON.parse(localStorage.getItem('talkup_session') || 'null');
     let pendingVerification = null;
-    let currentUser = null;
     let targetCatForChannel = null;
 
-    let appData = [
+    let appData = JSON.parse(localStorage.getItem('talkup_servers')) || [
       {
         id: 's1',
         name: 'TalkUp HQ',
@@ -444,11 +454,63 @@
       }
     ];
 
+    let activeView = 'home';
     let activeServerId = 's1';
     let activeChannelId = 'ch1';
+    let activeDmUser = null;
+    let currentFriendsTab = 'online';
+
+    // Keydown listener for 'G' key Guest Mode Shortcut
+    window.addEventListener('keydown', (e) => {
+      const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') return;
+
+      if (e.key === 'g' || e.key === 'G') {
+        enterAsGuest();
+      }
+    });
+
+    function enterAsGuest() {
+      currentUser = {
+        username: 'Guest',
+        email: 'guest@talkup.local',
+        isGuest: true,
+        status: 'online',
+        color: '#8a8e94',
+        avatarUrl: '',
+        bio: 'Guest User',
+        friends: [],
+        friendRequests: [],
+        dms: {}
+      };
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('verification-screen').classList.add('hidden');
+      document.getElementById('app-screen').classList.remove('hidden');
+      updateUserProfileUI();
+      renderApp();
+    }
+
+    // Auto Session Restore on Refresh
+    window.addEventListener('DOMContentLoaded', () => {
+      if (currentUser) {
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('app-screen').classList.remove('hidden');
+        updateUserProfileUI();
+        renderApp();
+      }
+    });
+
+    function saveState() {
+      localStorage.setItem('talkup_users', JSON.stringify(users));
+      localStorage.setItem('talkup_servers', JSON.stringify(appData));
+      if (currentUser && !currentUser.isGuest) {
+        localStorage.setItem('talkup_session', JSON.stringify(currentUser));
+      } else {
+        localStorage.removeItem('talkup_session');
+      }
+    }
 
     function switchAuthTab(mode) {
-      currentAuthMode = mode;
       document.getElementById('tab-login').classList.toggle('active', mode === 'login');
       document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
       document.getElementById('login-form').classList.toggle('hidden', mode !== 'login');
@@ -530,15 +592,19 @@
             password: pendingVerification.password,
             status: 'online',
             color: '#5865f2',
-            bio: ''
+            avatarUrl: '',
+            bio: '',
+            friends: [],
+            friendRequests: [],
+            dms: {}
           };
           users.push(newUser);
-          localStorage.setItem('talkup_users', JSON.stringify(users));
           currentUser = newUser;
         } else {
           currentUser = users.find(u => u.email === pendingVerification.email);
         }
 
+        saveState();
         document.getElementById('verification-screen').classList.add('hidden');
         document.getElementById('app-screen').classList.remove('hidden');
         updateUserProfileUI();
@@ -552,21 +618,54 @@
     function updateUserProfileUI() {
       if (!currentUser) return;
       document.getElementById('current-username').innerText = currentUser.username;
-      const avatar = document.getElementById('user-avatar-text');
-      avatar.childNodes[0].textContent = currentUser.username.charAt(0).toUpperCase();
-      avatar.style.backgroundColor = currentUser.color || '#5865f2';
+      
+      const avatarElem = document.getElementById('user-avatar-element');
+      const avatarInitial = document.getElementById('user-avatar-initial');
+
+      if (currentUser.avatarUrl) {
+        avatarElem.style.backgroundImage = `url('${currentUser.avatarUrl}')`;
+        avatarInitial.innerText = '';
+      } else {
+        avatarElem.style.backgroundImage = 'none';
+        avatarElem.style.backgroundColor = currentUser.color || '#5865f2';
+        avatarInitial.innerText = currentUser.username.charAt(0).toUpperCase();
+      }
 
       const statusInd = document.getElementById('user-status-indicator');
       statusInd.className = `status-indicator status-${currentUser.status || 'online'}`;
-      document.getElementById('current-status-text').innerText = (currentUser.status || 'online').toUpperCase();
+      document.getElementById('current-status-text').innerText = currentUser.isGuest ? 'Guest User' : (currentUser.status || 'online').toUpperCase();
+
+      document.getElementById('profile-avatar-input').value = currentUser.avatarUrl || '';
+      document.getElementById('profile-color-input').value = currentUser.color || '#5865f2';
+      document.getElementById('profile-status-select').value = currentUser.status || 'online';
+      document.getElementById('profile-bio-input').value = currentUser.bio || '';
+    }
+
+    function handleProfileClick() {
+      if (currentUser && currentUser.isGuest) {
+        alert("Guests cannot customize their profile. Please log in or sign up!");
+        return;
+      }
+      openModal('profile-modal');
     }
 
     function saveProfile(e) {
       e.preventDefault();
-      currentUser.status = document.getElementById('profile-status-select').value;
+      if (currentUser && currentUser.isGuest) {
+        alert("Guest profile changes cannot be saved!");
+        closeModal('profile-modal');
+        return;
+      }
+
+      currentUser.avatarUrl = document.getElementById('profile-avatar-input').value.trim();
       currentUser.color = document.getElementById('profile-color-input').value;
+      currentUser.status = document.getElementById('profile-status-select').value;
       currentUser.bio = document.getElementById('profile-bio-input').value;
-      localStorage.setItem('talkup_users', JSON.stringify(users));
+      
+      const idx = users.findIndex(u => u.username === currentUser.username);
+      if (idx !== -1) users[idx] = currentUser;
+      
+      saveState();
       updateUserProfileUI();
       closeModal('profile-modal');
     }
@@ -579,25 +678,34 @@
 
     function logout() {
       currentUser = null;
+      localStorage.removeItem('talkup_session');
       document.getElementById('app-screen').classList.add('hidden');
       document.getElementById('auth-screen').classList.remove('hidden');
     }
 
-    // Modal Controls
+    function openHomeDirectMessages() {
+      activeView = 'home';
+      activeDmUser = null;
+      renderApp();
+    }
+
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // App Render Logic
     function renderApp() {
       const serverList = document.getElementById('server-list');
       serverList.innerHTML = '';
 
+      document.getElementById('home-icon-btn').classList.toggle('active', activeView === 'home');
+
       appData.forEach(server => {
         const icon = document.createElement('div');
-        icon.className = `server-icon ${server.id === activeServerId ? 'active' : ''}`;
+        icon.className = `server-icon ${activeView === 'server' && server.id === activeServerId ? 'active' : ''}`;
         icon.innerText = server.name.substring(0, 2).toUpperCase();
         icon.onclick = () => {
+          activeView = 'server';
           activeServerId = server.id;
+          activeDmUser = null;
           const firstCat = server.categories[0];
           if (firstCat && firstCat.channels[0]) {
             activeChannelId = firstCat.channels[0].id;
@@ -607,59 +715,332 @@
         serverList.appendChild(icon);
       });
 
-      const activeServer = appData.find(s => s.id === activeServerId) || appData[0];
-      document.getElementById('current-server-name').innerText = activeServer ? activeServer.name : 'No Servers';
+      const catList = document.getElementById('category-list');
+      catList.innerHTML = '';
 
-      const categoryList = document.getElementById('category-list');
-      categoryList.innerHTML = '';
+      if (activeView === 'home') {
+        document.getElementById('current-server-name').innerText = 'Direct Messages';
+        document.getElementById('server-settings-btn').style.display = 'none';
+        document.getElementById('add-category-btn').style.display = 'none';
 
-      if (activeServer) {
-        activeServer.categories.forEach(cat => {
-          const catDiv = document.createElement('div');
-          
-          const catHeader = document.createElement('div');
-          catHeader.className = 'category-header';
-          catHeader.innerHTML = `
-            <span>${cat.name}</span>
-            <div style="display:flex; gap:6px;">
-              <span class="action-icon" onclick="openCreateChannelModal('${cat.id}')" title="Add Channel">+</span>
-              <span class="action-icon" onclick="deleteCategory('${cat.id}')" title="Delete Category">??</span>
+        if (!currentUser.friends) currentUser.friends = [];
+        
+        const dmHeader = document.createElement('div');
+        dmHeader.className = 'category-header';
+        dmHeader.innerHTML = `<span>DIRECT MESSAGES</span>`;
+        catList.appendChild(dmHeader);
+
+        currentUser.friends.forEach(friendUsername => {
+          const friendObj = users.find(u => u.username === friendUsername) || { username: friendUsername, status: 'offline' };
+          const chDiv = document.createElement('div');
+          chDiv.className = `channel-item ${activeDmUser === friendUsername ? 'active' : ''}`;
+          chDiv.innerHTML = `
+            <div class="channel-name-wrapper">
+              <span class="status-indicator status-${friendObj.status || 'online'}" style="position:static; display:inline-block;"></span>
+              <span>${friendUsername}</span>
             </div>
           `;
-          catDiv.appendChild(catHeader);
-
-          cat.channels.forEach(ch => {
-            const chDiv = document.createElement('div');
-            chDiv.className = `channel-item ${ch.id === activeChannelId ? 'active' : ''}`;
-            
-            let icon = '#';
-            if (ch.type === 'voice') icon = '??';
-            if (ch.type === 'forum') icon = '??';
-            if (ch.type === 'stage') icon = '??';
-
-            chDiv.innerHTML = `
-              <div class="channel-name-wrapper">
-                <span style="font-size:14px; opacity:0.7;">${icon}</span>
-                <span>${ch.name}</span>
-              </div>
-              <span class="action-icon" onclick="deleteChannel(event, '${cat.id}', '${ch.id}')" title="Delete Channel">?</span>
-            `;
-            chDiv.onclick = (e) => {
-              if (e.target.classList.contains('action-icon')) return;
-              activeChannelId = ch.id;
-              renderApp();
-            };
-            catDiv.appendChild(chDiv);
-          });
-
-          categoryList.appendChild(catDiv);
+          chDiv.onclick = () => {
+            activeDmUser = friendUsername;
+            renderApp();
+          };
+          catList.appendChild(chDiv);
         });
-      }
 
-      renderChannelContent();
+        renderHomeChatContent();
+
+      } else {
+        document.getElementById('server-settings-btn').style.display = 'inline-flex';
+        document.getElementById('add-category-btn').style.display = 'inline-flex';
+
+        const activeServer = appData.find(s => s.id === activeServerId) || appData[0];
+        document.getElementById('current-server-name').innerText = activeServer ? activeServer.name : 'No Servers';
+
+        if (activeServer) {
+          document.getElementById('server-name-input').value = activeServer.name;
+
+          activeServer.categories.forEach(cat => {
+            const catDiv = document.createElement('div');
+            
+            const catHeader = document.createElement('div');
+            catHeader.className = 'category-header';
+            catHeader.innerHTML = `
+              <span>${cat.name}</span>
+              <div style="display:flex; gap:6px;">
+                <span class="action-icon" onclick="openCreateChannelModal('${cat.id}')" title="Add Channel">+</span>
+                <span class="action-icon" onclick="deleteCategory('${cat.id}')" title="Delete Category">🗑</span>
+              </div>
+            `;
+            catDiv.appendChild(catHeader);
+
+            cat.channels.forEach(ch => {
+              const chDiv = document.createElement('div');
+              chDiv.className = `channel-item ${ch.id === activeChannelId ? 'active' : ''}`;
+              
+              let iconStr = '#';
+              if (ch.type === 'voice') iconStr = '🔊';
+              if (ch.type === 'forum') iconStr = '💬';
+              if (ch.type === 'stage') iconStr = '📢';
+
+              chDiv.innerHTML = `
+                <div class="channel-name-wrapper">
+                  <span>${iconStr}</span>
+                  <span>${ch.name}</span>
+                </div>
+                <span class="action-icon" onclick="deleteChannel(event, '${cat.id}', '${ch.id}')" title="Delete Channel">✕</span>
+              `;
+              chDiv.onclick = (e) => {
+                if (e.target.classList.contains('action-icon')) return;
+                activeChannelId = ch.id;
+                renderApp();
+              };
+              catDiv.appendChild(chDiv);
+            });
+
+            catList.appendChild(catDiv);
+          });
+        }
+
+        renderServerChannelContent();
+      }
     }
 
-    function renderChannelContent() {
+    function renderHomeChatContent() {
+      const container = document.getElementById('main-content-body');
+      container.innerHTML = '';
+
+      if (activeDmUser) {
+        document.getElementById('current-channel-name').innerText = `@ ${activeDmUser}`;
+        document.getElementById('channel-type-badge').innerText = 'DIRECT MESSAGE';
+
+        container.innerHTML = `
+          <div class="chat-messages" id="chat-messages"></div>
+          <div class="chat-input-wrapper">
+            <input type="text" class="chat-input" placeholder="Message @${activeDmUser}" id="dm-input" onkeydown="handleSendDmMessage(event)">
+          </div>
+        `;
+
+        if (!currentUser.dms) currentUser.dms = {};
+        if (!currentUser.dms[activeDmUser]) currentUser.dms[activeDmUser] = [];
+
+        renderDmMessages();
+      } else {
+        document.getElementById('current-channel-name').innerText = 'Friends';
+        document.getElementById('channel-type-badge').innerText = 'HOME';
+
+        container.innerHTML = `
+          <div style="padding: 12px 16px; border-bottom: 1px solid #26282c; display:flex; gap:16px;">
+            <button class="friends-nav-btn ${currentFriendsTab === 'online' ? 'active' : ''}" onclick="switchFriendsTab('online')">Online</button>
+            <button class="friends-nav-btn ${currentFriendsTab === 'all' ? 'active' : ''}" onclick="switchFriendsTab('all')">All</button>
+            <button class="friends-nav-btn ${currentFriendsTab === 'pending' ? 'active' : ''}" onclick="switchFriendsTab('pending')">Pending (${(currentUser.friendRequests || []).length})</button>
+            <button class="btn" style="width:auto; padding: 4px 12px; margin:0;" onclick="switchFriendsTab('add')">Add Friend</button>
+          </div>
+          <div class="friends-list" id="friends-list-container"></div>
+        `;
+
+        renderFriendsTabContent();
+      }
+    }
+
+    function switchFriendsTab(tab) {
+      currentFriendsTab = tab;
+      renderHomeChatContent();
+    }
+
+    function renderFriendsTabContent() {
+      const list = document.getElementById('friends-list-container');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (!currentUser.friends) currentUser.friends = [];
+      if (!currentUser.friendRequests) currentUser.friendRequests = [];
+
+      if (currentFriendsTab === 'add') {
+        if (currentUser.isGuest) {
+          list.innerHTML = `
+            <div style="max-width: 400px; padding: 12px;">
+              <h3 style="margin-bottom:8px; color:#f23f43;">GUEST RESTRICTION</h3>
+              <p style="font-size:13px; color:#949ba4;">You are currently using TalkUp as a guest. Guests cannot send friend requests. Please log in or sign up for a full account!</p>
+            </div>
+          `;
+          return;
+        }
+
+        list.innerHTML = `
+          <div style="max-width: 400px; padding: 12px;">
+            <h3 style="margin-bottom:8px;">ADD FRIEND</h3>
+            <p style="font-size:12px; color:#949ba4; margin-bottom:12px;">You can add friends by their TalkUp username.</p>
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="add-friend-input" class="chat-input" placeholder="Enter a username">
+              <button class="btn" style="width:auto; padding:0 20px;" onclick="sendFriendRequest()">Send</button>
+            </div>
+            <div id="add-friend-status" class="status-msg" style="margin-top:8px; text-align:left;"></div>
+          </div>
+        `;
+      } else if (currentFriendsTab === 'pending') {
+        if (currentUser.friendRequests.length === 0) {
+          list.innerHTML = `<p style="color:#949ba4;">No pending friend requests.</p>`;
+          return;
+        }
+        currentUser.friendRequests.forEach(reqName => {
+          const item = document.createElement('div');
+          item.className = 'friend-item';
+          item.innerHTML = `
+            <span><strong>${reqName}</strong> sent you a friend request.</span>
+            <div style="display:flex; gap:8px;">
+              <button class="btn" style="width:auto; padding:4px 12px;" onclick="acceptFriendRequest('${reqName}')">Accept</button>
+              <button class="btn btn-danger" style="width:auto; padding:4px 12px;" onclick="declineFriendRequest('${reqName}')">Decline</button>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+      } else {
+        const displayFriends = currentUser.friends.filter(fName => {
+          const userObj = users.find(u => u.username === fName);
+          if (currentFriendsTab === 'online') return userObj && userObj.status === 'online';
+          return true;
+        });
+
+        if (displayFriends.length === 0) {
+          list.innerHTML = `<p style="color:#949ba4;">No friends found here.</p>`;
+          return;
+        }
+
+        displayFriends.forEach(fName => {
+          const userObj = users.find(u => u.username === fName) || { username: fName, status: 'offline' };
+          const item = document.createElement('div');
+          item.className = 'friend-item';
+          item.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div class="avatar" style="${userObj.avatarUrl ? `background-image:url('${userObj.avatarUrl}')` : `background-color:${userObj.color || '#5865f2'}`}">
+                ${userObj.avatarUrl ? '' : fName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div><strong>${fName}</strong></div>
+                <div style="font-size:11px; color:#949ba4;">${(userObj.status || 'online').toUpperCase()}</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary" style="width:auto; padding:6px 12px; margin:0;" onclick="openDmWith('${fName}')">Message</button>
+          `;
+          list.appendChild(item);
+        });
+      }
+    }
+
+    function sendFriendRequest() {
+      if (currentUser && currentUser.isGuest) {
+        alert("Guests cannot send friend requests!");
+        return;
+      }
+
+      const input = document.getElementById('add-friend-input');
+      const status = document.getElementById('add-friend-status');
+      const targetName = input.value.trim();
+
+      if (!targetName) return;
+      if (targetName.toLowerCase() === currentUser.username.toLowerCase()) {
+        status.className = 'status-msg error';
+        status.innerText = "You cannot add yourself!";
+        return;
+      }
+
+      const targetUser = users.find(u => u.username.toLowerCase() === targetName.toLowerCase());
+      if (!targetUser) {
+        status.className = 'status-msg error';
+        status.innerText = "User not found.";
+        return;
+      }
+
+      if (!targetUser.friendRequests) targetUser.friendRequests = [];
+      if (!currentUser.friends) currentUser.friends = [];
+
+      if (currentUser.friends.includes(targetUser.username)) {
+        status.className = 'status-msg error';
+        status.innerText = "Already friends with this user.";
+        return;
+      }
+
+      if (!targetUser.friendRequests.includes(currentUser.username)) {
+        targetUser.friendRequests.push(currentUser.username);
+        saveState();
+      }
+
+      status.className = 'status-msg info';
+      status.innerText = `Friend request sent to ${targetUser.username}!`;
+      input.value = '';
+    }
+
+    function acceptFriendRequest(senderName) {
+      currentUser.friendRequests = currentUser.friendRequests.filter(r => r !== senderName);
+      if (!currentUser.friends) currentUser.friends = [];
+      if (!currentUser.friends.includes(senderName)) currentUser.friends.push(senderName);
+
+      const senderObj = users.find(u => u.username === senderName);
+      if (senderObj) {
+        if (!senderObj.friends) senderObj.friends = [];
+        if (!senderObj.friends.includes(currentUser.username)) senderObj.friends.push(currentUser.username);
+      }
+
+      saveState();
+      renderHomeChatContent();
+    }
+
+    function declineFriendRequest(senderName) {
+      currentUser.friendRequests = currentUser.friendRequests.filter(r => r !== senderName);
+      saveState();
+      renderHomeChatContent();
+    }
+
+    function openDmWith(friendUsername) {
+      activeDmUser = friendUsername;
+      renderApp();
+    }
+
+    function renderDmMessages() {
+      const msgBox = document.getElementById('chat-messages');
+      if (!msgBox || !activeDmUser) return;
+      msgBox.innerHTML = `<p style="color: #949ba4;">This is the beginning of your direct message history with @${activeDmUser}.</p>`;
+
+      const dmHistory = (currentUser.dms && currentUser.dms[activeDmUser]) || [];
+      dmHistory.forEach(m => {
+        const msg = document.createElement('div');
+        msg.className = 'chat-message-item';
+        msg.innerHTML = `
+          <div class="avatar" style="width:36px; height:36px;">${m.author.charAt(0).toUpperCase()}</div>
+          <div>
+            <div><strong style="color:#f2f3f5;">${m.author}</strong></div>
+            <div style="color:#dbdee1; margin-top:2px;">${m.text}</div>
+          </div>
+        `;
+        msgBox.appendChild(msg);
+      });
+      msgBox.scrollTop = msgBox.scrollHeight;
+    }
+
+    function handleSendDmMessage(e) {
+      if (e.key === 'Enter' && e.target.value.trim() !== '') {
+        const text = e.target.value.trim();
+        e.target.value = '';
+
+        if (!currentUser.dms) currentUser.dms = {};
+        if (!currentUser.dms[activeDmUser]) currentUser.dms[activeDmUser] = [];
+
+        const newMsg = { author: currentUser.username, text };
+        currentUser.dms[activeDmUser].push(newMsg);
+
+        const friendObj = users.find(u => u.username === activeDmUser);
+        if (friendObj) {
+          if (!friendObj.dms) friendObj.dms = {};
+          if (!friendObj.dms[currentUser.username]) friendObj.dms[currentUser.username] = [];
+          friendObj.dms[currentUser.username].push(newMsg);
+        }
+
+        saveState();
+        renderDmMessages();
+      }
+    }
+
+    function renderServerChannelContent() {
       const activeServer = appData.find(s => s.id === activeServerId);
       if (!activeServer) return;
 
@@ -671,7 +1052,7 @@
 
       if (!activeChannel) return;
 
-      document.getElementById('current-channel-name').innerText = activeChannel.name;
+      document.getElementById('current-channel-name').innerText = `# ${activeChannel.name}`;
       document.getElementById('channel-type-badge').innerText = activeChannel.type.toUpperCase();
 
       const container = document.getElementById('main-content-body');
@@ -687,45 +1068,13 @@
         renderTextMessages(activeChannel);
       } else if (activeChannel.type === 'voice') {
         container.innerHTML = `
-          <div class="voice-room">
-            <h2>?? Voice Connected: ${activeChannel.name}</h2>
-            <div class="participants-grid">
-              <div class="participant-card speaking">
-                <div class="user-avatar" style="background:${currentUser ? currentUser.color : '#5865f2'}">${currentUser ? currentUser.username.charAt(0).toUpperCase() : 'U'}</div>
-                <span style="font-size:12px;">${currentUser ? currentUser.username : 'You'}</span>
-              </div>
-            </div>
-            <button class="btn btn-danger" style="width: auto; padding: 10px 24px;" onclick="renderApp()">Disconnect</button>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
+            <h2>🔊 Voice Connected: ${activeChannel.name}</h2>
+            <button class="btn btn-danger" style="width:auto; padding:8px 24px;" onclick="renderApp()">Disconnect</button>
           </div>
         `;
-      } else if (activeChannel.type === 'stage') {
-        container.innerHTML = `
-          <div class="stage-room">
-            <h2>?? Stage: ${activeChannel.name}</h2>
-            <div style="background:#2b2d31; padding:20px; border-radius:12px; width:80%; max-width:500px; text-align:center;">
-              <h4 style="color:#949ba4; margin-bottom:12px;">STAGE SPEAKERS</h4>
-              <div class="participants-grid">
-                <div class="participant-card">
-                  <div class="user-avatar">TU</div>
-                  <span style="font-size:12px;">Stage Host</span>
-                </div>
-              </div>
-            </div>
-            <button class="btn" style="width: auto; padding: 10px 24px;">Request to Speak</button>
-          </div>
-        `;
-      } else if (activeChannel.type === 'forum') {
-        container.innerHTML = `
-          <div class="forum-container">
-            <button class="btn" style="margin-bottom:16px; width:auto; padding:8px 16px;" onclick="createForumPost()">+ New Post</button>
-            <div id="forum-posts-list">
-              <div class="forum-post">
-                <h3>Welcome to the ${activeChannel.name} forum!</h3>
-                <p style="color:#949ba4; font-size:13px; margin-top:4px;">Start a discussion or ask a question here.</p>
-              </div>
-            </div>
-          </div>
-        `;
+      } else {
+        container.innerHTML = `<div style="padding:20px;">Channel Type (${activeChannel.type}) loaded successfully.</div>`;
       }
     }
 
@@ -738,7 +1087,13 @@
         channel.messages.forEach(m => {
           const msg = document.createElement('div');
           msg.className = 'chat-message-item';
-          msg.innerHTML = `<strong style="color:#f2f3f5;">${m.author}:</strong> <span style="color:#dbdee1;">${m.text}</span>`;
+          msg.innerHTML = `
+            <div class="avatar" style="width:36px; height:36px;">${m.author.charAt(0).toUpperCase()}</div>
+            <div>
+              <div><strong style="color:#f2f3f5;">${m.author}</strong></div>
+              <div style="color:#dbdee1; margin-top:2px;">${m.text}</div>
+            </div>
+          `;
           msgBox.appendChild(msg);
         });
         msgBox.scrollTop = msgBox.scrollHeight;
@@ -755,10 +1110,37 @@
           const ch = c.channels.find(ch => ch.id === activeChannelId);
           if (ch) {
             if (!ch.messages) ch.messages = [];
-            ch.messages.push({ author: currentUser ? currentUser.username : 'You', text });
+            ch.messages.push({ author: currentUser ? currentUser.username : 'Guest', text });
+            saveState();
             renderTextMessages(ch);
           }
         });
+      }
+    }
+
+    function saveServerSettings(e) {
+      e.preventDefault();
+      const newName = document.getElementById('server-name-input').value.trim();
+      const activeServer = appData.find(s => s.id === activeServerId);
+      if (activeServer && newName) {
+        activeServer.name = newName;
+        saveState();
+        closeModal('server-settings-modal');
+        renderApp();
+      }
+    }
+
+    function deleteCurrentServer() {
+      if (confirm('Are you sure you want to delete this server?')) {
+        appData = appData.filter(s => s.id !== activeServerId);
+        if (appData.length > 0) {
+          activeServerId = appData[0].id;
+        } else {
+          openHomeDirectMessages();
+        }
+        saveState();
+        closeModal('server-settings-modal');
+        renderApp();
       }
     }
 
@@ -774,8 +1156,10 @@
             categories: [{ id: 'c_' + Date.now(), name: 'General', channels: [{ id: 'ch_' + Date.now(), name: 'general', type: 'text', messages: [] }] }]
           };
           appData.push(newServer);
+          activeView = 'server';
           activeServerId = newServer.id;
           activeChannelId = newServer.categories[0].channels[0].id;
+          saveState();
           renderApp();
         }
       } else if (type === 'category') {
@@ -784,6 +1168,7 @@
           const name = prompt('Enter Category Name:');
           if (name) {
             activeServer.categories.push({ id: 'c_' + Date.now(), name, channels: [] });
+            saveState();
             renderApp();
           }
         }
@@ -807,6 +1192,7 @@
           const newCh = { id: 'ch_' + Date.now(), name, type, messages: [] };
           cat.channels.push(newCh);
           activeChannelId = newCh.id;
+          saveState();
           closeModal('create-channel-modal');
           renderApp();
         }
@@ -820,6 +1206,7 @@
       const cat = activeServer.categories.find(c => c.id === catId);
       if (cat) {
         cat.channels = cat.channels.filter(ch => ch.id !== chId);
+        saveState();
         renderApp();
       }
     }
@@ -828,6 +1215,7 @@
       const activeServer = appData.find(s => s.id === activeServerId);
       if (activeServer) {
         activeServer.categories = activeServer.categories.filter(c => c.id !== catId);
+        saveState();
         renderApp();
       }
     }
@@ -846,6 +1234,7 @@
       const server = appData.find(s => s.inviteCode === code);
 
       if (server) {
+        activeView = 'server';
         activeServerId = server.id;
         if (server.categories[0] && server.categories[0].channels[0]) {
           activeChannelId = server.categories[0].channels[0].id;
@@ -854,17 +1243,6 @@
         renderApp();
       } else {
         alert('Invalid Invite Code!');
-      }
-    }
-
-    function createForumPost() {
-      const title = prompt('Enter Post Title:');
-      if (title) {
-        const list = document.getElementById('forum-posts-list');
-        const post = document.createElement('div');
-        post.className = 'forum-post';
-        post.innerHTML = `<h3>${title}</h3><p style="color:#949ba4; font-size:13px; margin-top:4px;">Posted by ${currentUser ? currentUser.username : 'You'} • Just now</p>`;
-        list.prepend(post);
       }
     }
   </script>
