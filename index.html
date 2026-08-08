@@ -3,40 +3,243 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free Roblox Luau AI Assistant</title>
-  <!-- Puter.js Library for Free AI Access -->
+  <title>MangoAI.gg - Free Roblox Luau Assistant</title>
+  <!-- Puter.js for zero-config free AI -->
   <script src="https://js.puter.com/v2/"></script>
   <style>
+    :root {
+      --mango-orange: #ff9f1c;
+      --mango-yellow: #ffe156;
+      --leaf-green: #2ec4b6;
+      --leaf-green-hover: #20a39e;
+      --bg-dark: #0f172a;
+      --panel-dark: #1e293b;
+      --border-color: #334155;
+      --text-light: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #0f172a; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; }
-    header { background-color: #1e293b; padding: 1rem; text-align: center; border-bottom: 1px solid #334155; }
-    header h1 { font-size: 1.25rem; color: #38bdf8; }
-    #chat-container { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
-    .message { max-width: 80%; padding: 0.75rem 1rem; border-radius: 8px; line-height: 1.5; font-size: 0.95rem; word-break: break-word; }
-    .user { align-self: flex-end; background-color: #0284c7; color: white; border-bottom-right-radius: 2px; }
-    .ai { align-self: flex-start; background-color: #1e293b; color: #e2e8f0; border-bottom-left-radius: 2px; border: 1px solid #334155; }
-    pre { background: #090d16; padding: 0.75rem; border-radius: 6px; overflow-x: auto; font-family: monospace; font-size: 0.85rem; margin-top: 0.5rem; position: relative; border: 1px solid #1e293b; }
-    code { color: #a5f3fc; }
-    .copy-btn { position: absolute; top: 6px; right: 6px; background: #334155; color: #fff; border: none; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; }
-    .copy-btn:hover { background: #0284c7; }
-    #input-form { display: flex; padding: 1rem; background-color: #1e293b; gap: 0.5rem; border-top: 1px solid #334155; }
-    #user-input { flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid #334155; background-color: #0f172a; color: white; outline: none; }
-    #user-input:focus { border-color: #0284c7; }
-    button[type="submit"] { padding: 0.75rem 1.5rem; background-color: #0284c7; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-    button[type="submit"]:hover { background-color: #0369a1; }
+    body { background-color: var(--bg-dark); color: var(--text-light); display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Navigation Header */
+    header {
+      background-color: var(--panel-dark);
+      padding: 0.8rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--mango-orange);
+    }
+    .brand { display: flex; align-items: center; gap: 0.5rem; font-size: 1.4rem; font-weight: bold; color: var(--mango-yellow); }
+    .brand span { color: var(--mango-orange); }
+
+    nav { display: flex; gap: 0.5rem; }
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .nav-btn:hover { color: var(--text-light); background: #334155; }
+    .nav-btn.active {
+      background-color: var(--mango-orange);
+      color: #000;
+      border-color: var(--mango-yellow);
+    }
+
+    /* Tab Content Areas */
+    main { flex: 1; display: flex; flex-direction: column; max-width: 1100px; width: 100%; margin: 0 auto; padding: 1.5rem; }
+    .tab-content { display: none; flex-direction: column; flex: 1; }
+    .tab-content.active { display: flex; }
+
+    /* Home Tab Styling */
+    .hero {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, rgba(255,159,28,0.1) 0%, rgba(46,196,182,0.1) 100%);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 2rem;
+    }
+    .hero h1 { font-size: 2.5rem; color: var(--mango-yellow); margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem auto; }
+    
+    .hero-img-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 1rem auto;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid var(--mango-orange);
+      box-shadow: 0 8px 24px rgba(255, 159, 28, 0.2);
+    }
+    .hero-img-container img { width: 100%; height: auto; display: block; }
+
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+    .feature-card {
+      background: var(--panel-dark);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+    .feature-card h3 { color: var(--mango-orange); margin-bottom: 0.5rem; }
+    .feature-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.4; }
+
+    /* AI Chat Tab Styling */
+    #chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: var(--panel-dark);
+      border-radius: 8px 8px 0 0;
+      border: 1px solid var(--border-color);
+      min-height: 450px;
+      max-height: 600px;
+    }
+    .message { max-width: 85%; padding: 0.85rem 1.2rem; border-radius: 8px; line-height: 1.6; font-size: 0.95rem; word-break: break-word; }
+    .message.user { align-self: flex-end; background-color: var(--mango-orange); color: #000; border-bottom-right-radius: 2px; font-weight: 500; }
+    .message.ai { align-self: flex-start; background-color: #0f172a; color: var(--text-light); border-bottom-left-radius: 2px; border: 1px solid var(--border-color); }
+
+    /* Special Character / Heading Formatting in AI Responses */
+    .message h1 { font-size: 1.4rem; color: var(--mango-yellow); border-bottom: 1px solid var(--border-color); margin: 0.8rem 0 0.4rem 0; padding-bottom: 0.2rem; }
+    .message h2 { font-size: 1.2rem; color: var(--mango-orange); margin: 0.6rem 0 0.3rem 0; }
+    .message h3 { font-size: 1.05rem; color: var(--leaf-green); margin: 0.4rem 0 0.2rem 0; }
+    .message strong { color: var(--mango-yellow); }
+    .message p { margin-bottom: 0.5rem; }
+
+    /* Code Block Formatting */
+    pre { background: #050811; padding: 0.85rem; border-radius: 6px; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 0.85rem; margin: 0.6rem 0; position: relative; border: 1px solid var(--border-color); }
+    code { color: var(--mango-yellow); font-family: 'Consolas', monospace; }
+    .copy-btn { position: absolute; top: 6px; right: 6px; background: var(--leaf-green); color: #000; border: none; padding: 4px 8px; font-size: 0.75rem; font-weight: bold; border-radius: 4px; cursor: pointer; }
+    .copy-btn:hover { background: var(--leaf-green-hover); color: #fff; }
+
+    #input-form { display: flex; padding: 1rem; background-color: var(--panel-dark); gap: 0.5rem; border-radius: 0 0 8px 8px; border: 1px solid var(--border-color); border-top: none; }
+    #user-input { flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--bg-dark); color: white; outline: none; }
+    #user-input:focus { border-color: var(--mango-orange); }
+    button[type="submit"] { padding: 0.75rem 1.5rem; background-color: var(--leaf-green); color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    button[type="submit"]:hover { background-color: var(--leaf-green-hover); color: #fff; }
+
+    /* Documentation Tab Styling */
+    .doc-section { background: var(--panel-dark); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 1.5rem; }
+    .doc-section h2 { color: var(--mango-yellow); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .doc-section p { color: var(--text-muted); line-height: 1.6; margin-bottom: 0.75rem; }
+    .doc-section ul { margin-left: 1.5rem; color: var(--text-light); }
+    .doc-section li { margin-bottom: 0.4rem; }
+    .syntax-box { background: var(--bg-dark); padding: 0.75rem 1rem; border-radius: 6px; border-left: 4px solid var(--mango-orange); font-family: monospace; color: var(--mango-yellow); margin: 0.5rem 0; }
   </style>
 </head>
 <body>
-  <header><h1>Roblox Luau AI Assistant (100% Free)</h1></header>
-  <div id="chat-container">
-    <div class="message ai">Hello! Ask me to write any Roblox Luau script, fix errors, or design game mechanics. No API key needed!</div>
-  </div>
-  <form id="input-form">
-    <input type="text" id="user-input" placeholder="e.g., Write a leaderboard script that gives coins..." required />
-    <button type="submit">Send</button>
-  </form>
+
+  <header>
+    <div class="brand">🥭 Mango<span>AI.gg</span></div>
+    <nav>
+      <button class="nav-btn active" onclick="switchTab('home')">Home</button>
+      <button class="nav-btn" onclick="switchTab('ai')">AI Scripting</button>
+      <button class="nav-btn" onclick="switchTab('docs')">Documentation</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- TAB 1: HOME PAGE -->
+    <section id="home-tab" class="tab-content active">
+      <div class="hero">
+        <h1>Welcome to MangoAI.gg 🥭</h1>
+        <p>The ultimate free AI companion built for Roblox Luau script generation, bug fixing, and game mechanics setup.</p>
+        
+        <div class="hero-img-container">
+          <img src="watermarked_img_3248696173610090388.png" alt="MangoAI.gg Concept UI Interface">
+        </div>
+
+        <button class="nav-btn active" style="font-size: 1.1rem; padding: 0.75rem 2rem; margin-top: 1rem;" onclick="switchTab('ai')">Start Scripting Now 🚀</button>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>⚡ 100% Free & Keyless</h3>
+          <p>Powered by Puter.js directly in your browser. No API keys, zero credit card requirements, and unlimited access.</p>
+        </div>
+        <div class="feature-card">
+          <h3>📝 Modern Heading Support</h3>
+          <p>Responses cleanly render markdown headings (<code>#</code>, <code>##</code>, <code>###</code>) and code blocks for ultra-scannable outputs.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🎮 Luau Optimized</h3>
+          <p>Generates production-grade Roblox scripts adhering to modern standards like <code>task.wait()</code>, <code>game:GetService()</code>, and scoped variables.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: AI ASSISTANT CHAT -->
+    <section id="ai-tab" class="tab-content">
+      <div id="chat-container">
+        <div class="message ai">
+          Hello! I am <strong>MangoAI.gg</strong> 🥭<br>
+          Ask me to generate Roblox Luau scripts, explain complex logic, or format responses using <code>#</code> and <code>##</code> headings!
+        </div>
+      </div>
+      <form id="input-form">
+        <input type="text" id="user-input" placeholder="e.g., # Write a leaderboard script that saves coins with DataStore" required />
+        <button type="submit">Send 🥭</button>
+      </form>
+    </section>
+
+    <!-- TAB 3: DOCUMENTATION -->
+    <section id="docs-tab" class="tab-content">
+      <div class="doc-section">
+        <h2># Getting Started with MangoAI.gg</h2>
+        <p>MangoAI.gg provides rapid generation of Roblox Luau code directly inside your web application without third-party key management.</p>
+      </div>
+
+      <div class="doc-section">
+        <h2>## Using Special Characters & Formatting</h2>
+        <p>You can use special characters in your prompts or ask the AI to format its answers using Markdown standard prefixes:</p>
+        <ul>
+          <li><code># Text</code> — Renders a prominent <strong>Heading 1</strong> (Yellow)</li>
+          <li><code>## Text</code> — Renders a <strong>Heading 2</strong> sub-header (Mango Orange)</li>
+          <li><code>### Text</code> — Renders a <strong>Heading 3</strong> section header (Leaf Green)</li>
+          <li><code>```luau ... ```</code> — Renders an interactive code snippet with a copy button.</li>
+        </ul>
+        <div class="syntax-box">Example Prompt: "## Explain how task.spawn works in Luau with an example"</div>
+      </div>
+
+      <div class="doc-section">
+        <h2>## Recommended Luau Prompts</h2>
+        <ul>
+          <li><code># Write a Daily Reward DataStore script</code></li>
+          <li><code>## Create a raycast gun shooting framework for LocalScript</code></li>
+          <li><code># How do I fix Memory Leaks with Maid/Janitor patterns?</code></li>
+        </ul>
+      </div>
+    </section>
+  </main>
 
   <script>
+    // Tab Navigation Switcher
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      if (tabName === 'home') {
+        document.getElementById('home-tab').classList.add('active');
+        document.querySelectorAll('.nav-btn')[0].classList.add('active');
+      } else if (tabName === 'ai') {
+        document.getElementById('ai-tab').classList.add('active');
+        document.querySelectorAll('.nav-btn')[1].classList.add('active');
+      } else if (tabName === 'docs') {
+        document.getElementById('docs-tab').classList.add('active');
+        document.querySelectorAll('.nav-btn')[2].classList.add('active');
+      }
+    }
+
+    // Chat App Logic
     const c = document.getElementById("chat-container");
     const f = document.getElementById("input-form");
     const i = document.getElementById("user-input");
@@ -45,9 +248,7 @@
       const m = document.createElement("div");
       m.classList.add("message", sender);
       if (sender === "ai") {
-        m.innerHTML = txt.replace(/```(lua|luau)?([\s\S]*?)```/g, (_, __, code) => {
-          return `<pre><code>${escapeHtml(code.trim())}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>`;
-        });
+        m.innerHTML = parseMarkdown(txt);
       } else {
         m.textContent = txt;
       }
@@ -55,8 +256,18 @@
       c.scrollTop = c.scrollHeight;
     }
 
-    function escapeHtml(s) {
-      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    // Custom Markdown Parsing including # and ## character headings
+    function parseMarkdown(text) {
+      let formatted = text
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") // Escape HTML
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')                           // # Heading 1
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')                          // ## Heading 2
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')                         // ### Heading 3
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')                 // **Bold**
+        .replace(/```(lua|luau)?([\s\S]*?)```/g, (_, __, code) => {      // Code Blocks
+          return `<pre><code>${code.trim()}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>`;
+        });
+      return formatted;
     }
 
     window.copyCode = function(b) {
@@ -75,20 +286,20 @@
 
       const l = document.createElement("div");
       l.classList.add("message", "ai");
-      l.textContent = "Generating Luau code...";
+      l.textContent = "MangoAI is thinking...";
       c.appendChild(l);
 
       try {
-        // Calls Puter's free AI service in the browser
+        // Free Puter AI call
         const response = await puter.ai.chat(
-          `You are an expert Roblox Luau coding assistant. Provide concise explanations and modern Luau code blocks using task.wait, game:GetService, and local scope.\n\nUser Question: ${p}`
+          `You are MangoAI.gg, an expert Roblox Luau assistant. Use headers like # for main sections and ## for sub-sections. Keep explanations concise and provide clean Luau code blocks using modern standards (task.wait, game:GetService, local scope).\n\nUser Question: ${p}`
         );
 
         c.removeChild(l);
         appendMessage(response.toString(), "ai");
       } catch (err) {
         c.removeChild(l);
-        appendMessage("Error generating code. Please try again.", "ai");
+        appendMessage("Error generating script. Please try sending your request again.", "ai");
       }
     });
   </script>
