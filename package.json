@@ -1,0 +1,29 @@
+{
+  "name": "mangoai-gg",
+  "version": "1.0.0",
+  "description": "MangoAI.gg Roblox Luau Assistant",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.mangoai.gg",
+    "productName": "MangoAI.gg",
+    "files": [
+      "index.html",
+      "main.js",
+      "watermarked_img_3248696173610090388.png"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    }
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  }
+}
