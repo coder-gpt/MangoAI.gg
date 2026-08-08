@@ -22,6 +22,9 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: var(--bg-dark); color: var(--text-light); display: flex; flex-direction: column; min-height: 100vh; }
 
+    /* Icons */
+    .icon { width: 18px; height: 18px; fill: currentColor; display: inline-block; vertical-align: middle; }
+
     /* Navigation Header */
     header {
       background-color: var(--panel-dark);
@@ -49,7 +52,7 @@
       font-size: 0.9rem;
       display: flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.4rem;
     }
 
     nav { display: flex; gap: 0.5rem; }
@@ -62,6 +65,9 @@
       cursor: pointer;
       font-weight: 600;
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
     .nav-btn:hover { color: var(--text-light); background: #334155; }
     .nav-btn.active {
@@ -77,15 +83,18 @@
       font-weight: bold;
       border: none;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
     .auth-btn:hover { background-color: var(--leaf-green-hover); color: #fff; }
 
-    /* Tab Content Areas */
+    /* Main Container & Tabs */
     main { flex: 1; display: flex; flex-direction: column; max-width: 1100px; width: 100%; margin: 0 auto; padding: 1.5rem; }
     .tab-content { display: none; flex-direction: column; flex: 1; }
     .tab-content.active { display: flex; }
 
-    /* Home Tab Styling */
+    /* Home Tab */
     .hero {
       text-align: center;
       padding: 2rem 1rem;
@@ -115,10 +124,45 @@
       border-radius: 8px;
       border: 1px solid var(--border-color);
     }
-    .feature-card h3 { color: var(--mango-orange); margin-bottom: 0.5rem; }
+    .feature-card h3 { color: var(--mango-orange); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
     .feature-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.4; }
 
-    /* AI Chat Tab Styling */
+    /* Dashboard Tab */
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .dash-stat-card {
+      background: var(--panel-dark);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .dash-stat-card label { color: var(--text-muted); font-size: 0.85rem; font-weight: bold; }
+    .dash-stat-card .val { font-size: 1.8rem; font-weight: bold; color: var(--mango-yellow); }
+
+    .history-section {
+      background: var(--panel-dark);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      flex: 1;
+    }
+    .history-section h2 { color: var(--mango-orange); margin-bottom: 1rem; font-size: 1.2rem; }
+    .history-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .history-item {
+      background: var(--bg-dark);
+      padding: 0.8rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .history-item .prompt { font-weight: 500; color: var(--text-light); }
+    .history-item .time { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* AI Chat Tab */
     #chat-container {
       flex: 1;
       overflow-y: auto;
@@ -150,10 +194,10 @@
     #input-form { display: flex; padding: 1rem; background-color: var(--panel-dark); gap: 0.5rem; border-radius: 0 0 8px 8px; border: 1px solid var(--border-color); border-top: none; }
     #user-input { flex: 1; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--bg-dark); color: white; outline: none; }
     #user-input:focus { border-color: var(--mango-orange); }
-    button[type="submit"] { padding: 0.75rem 1.5rem; background-color: var(--leaf-green); color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    button[type="submit"] { padding: 0.75rem 1.5rem; background-color: var(--leaf-green); color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; }
     button[type="submit"]:hover { background-color: var(--leaf-green-hover); color: #fff; }
 
-    /* Documentation Tab Styling */
+    /* Docs Tab */
     .doc-section { background: var(--panel-dark); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 1.5rem; }
     .doc-section h2 { color: var(--mango-yellow); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
     .doc-section p { color: var(--text-muted); line-height: 1.6; margin-bottom: 0.75rem; }
@@ -161,7 +205,7 @@
     .doc-section li { margin-bottom: 0.4rem; }
     .syntax-box { background: var(--bg-dark); padding: 0.75rem 1rem; border-radius: 6px; border-left: 4px solid var(--mango-orange); font-family: monospace; color: var(--mango-yellow); margin: 0.5rem 0; }
 
-    /* Auth Modal Styling */
+    /* Auth Modal */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -205,19 +249,35 @@
 </head>
 <body>
 
+  <!-- SVG Icon Sprite Sheet -->
+  <svg style="display: none;">
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></symbol>
+    <symbol id="icon-dashboard" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></symbol>
+    <symbol id="icon-terminal" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zm-12-7l4 3-4 3v-6zm5 5h5v2h-5z"/></symbol>
+    <symbol id="icon-docs" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></symbol>
+    <symbol id="icon-send" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></symbol>
+    <symbol id="icon-mango" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></symbol>
+  </svg>
+
   <header>
-    <div class="brand">🥭 Mango<span>AI.gg</span></div>
+    <div class="brand">
+      <svg class="icon" style="width: 24px; height: 24px; fill: var(--mango-orange);"><use href="#icon-mango"/></svg>
+      Mango<span>AI.gg</span>
+    </div>
     
     <div class="header-right">
       <div class="credit-badge">
-        🥭 Credits: <span id="credit-count">1000</span>
+        <svg class="icon" style="fill: var(--mango-yellow);"><use href="#icon-mango"/></svg>
+        Credits: <span id="credit-count">1000</span>
       </div>
       <nav>
-        <button class="nav-btn active" onclick="switchTab('home')">Home</button>
-        <button class="nav-btn" onclick="switchTab('ai')">AI Scripting</button>
-        <button class="nav-btn" onclick="switchTab('docs')">Documentation</button>
+        <button class="nav-btn active" onclick="switchTab('home')"><svg class="icon"><use href="#icon-home"/></svg> Home</button>
+        <button class="nav-btn" onclick="switchTab('dashboard')"><svg class="icon"><use href="#icon-dashboard"/></svg> Dashboard</button>
+        <button class="nav-btn" onclick="switchTab('ai')"><svg class="icon"><use href="#icon-terminal"/></svg> Scripting</button>
+        <button class="nav-btn" onclick="switchTab('docs')"><svg class="icon"><use href="#icon-docs"/></svg> Docs</button>
       </nav>
-      <button class="auth-btn" id="login-nav-btn" onclick="openAuthModal()">Sign In / Log In</button>
+      <button class="auth-btn" id="login-nav-btn" onclick="openAuthModal()"><svg class="icon"><use href="#icon-user"/></svg> Sign In</button>
     </div>
   </header>
 
@@ -232,26 +292,53 @@
           <img src="watermarked_img_3248696173610090388.png" alt="MangoAI.gg Concept UI Interface">
         </div>
 
-        <button class="nav-btn active" style="font-size: 1.1rem; padding: 0.75rem 2rem; margin-top: 1rem;" onclick="switchTab('ai')">Start Scripting Now 🚀</button>
+        <button class="nav-btn active" style="font-size: 1.1rem; padding: 0.75rem 2rem; margin: 1rem auto 0 auto;" onclick="switchTab('ai')">
+          <svg class="icon"><use href="#icon-terminal"/></svg> Start Scripting Now 🚀
+        </button>
       </div>
 
       <div class="features-grid">
         <div class="feature-card">
-          <h3>🥭 Credit System</h3>
+          <h3><svg class="icon"><use href="#icon-mango"/></svg> Credit System</h3>
           <p>Start with 1,000 free credits! Code generations cost 50 credits each. Log in to unlock unlimited infinite credits.</p>
         </div>
         <div class="feature-card">
-          <h3>📝 Modern Heading Support</h3>
-          <p>Responses cleanly render markdown headings (<code>#</code>, <code>##</code>, <code>###</code>) and code blocks for ultra-scannable outputs.</p>
+          <h3><svg class="icon"><use href="#icon-dashboard"/></svg> Live Dashboard</h3>
+          <p>Track your generated scripts, credit consumption, and recent query history in your personal dashboard.</p>
         </div>
         <div class="feature-card">
-          <h3>🎮 Luau Optimized</h3>
+          <h3><svg class="icon"><use href="#icon-terminal"/></svg> Modern Luau AI</h3>
           <p>Generates production-grade Roblox scripts adhering to modern standards like <code>task.wait()</code>, <code>game:GetService()</code>, and local scope.</p>
         </div>
       </div>
     </section>
 
-    <!-- TAB 2: AI ASSISTANT CHAT -->
+    <!-- TAB 2: DASHBOARD PAGE -->
+    <section id="dashboard-tab" class="tab-content">
+      <div class="dashboard-grid">
+        <div class="dash-stat-card">
+          <label>Account Tier</label>
+          <div class="val" id="dash-tier">Free Tier</div>
+        </div>
+        <div class="dash-stat-card">
+          <label>Remaining Credits</label>
+          <div class="val" id="dash-credits">1000</div>
+        </div>
+        <div class="dash-stat-card">
+          <label>Scripts Generated</label>
+          <div class="val" id="dash-scripts-count">0</div>
+        </div>
+      </div>
+
+      <div class="history-section">
+        <h2><svg class="icon"><use href="#icon-docs"/></svg> Recent Generation History</h2>
+        <div class="history-list" id="history-list">
+          <div style="color: var(--text-muted); font-size: 0.9rem;">No scripts generated yet. Try asking MangoAI in the Scripting tab!</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: AI ASSISTANT CHAT -->
     <section id="ai-tab" class="tab-content">
       <div id="chat-container">
         <div class="message ai">
@@ -262,20 +349,22 @@
       </div>
       <form id="input-form">
         <input type="text" id="user-input" placeholder="e.g., # Write a leaderboard script that saves coins with DataStore" required />
-        <button type="submit">Send 🥭 (-50 Credits)</button>
+        <button type="submit">
+          <svg class="icon"><use href="#icon-send"/></svg> Send (-50 Credits)
+        </button>
       </form>
     </section>
 
-    <!-- TAB 3: DOCUMENTATION -->
+    <!-- TAB 4: DOCUMENTATION -->
     <section id="docs-tab" class="tab-content">
       <div class="doc-section">
-        <h2># Getting Started with MangoAI.gg</h2>
+        <h2><svg class="icon"><use href="#icon-docs"/></svg> Getting Started with MangoAI.gg</h2>
         <p>MangoAI.gg provides rapid generation of Roblox Luau code directly inside your web application without third-party key management.</p>
       </div>
 
       <div class="doc-section">
-        <h2>## Using Special Characters & Formatting</h2>
-        <p>You can use special characters in your prompts or ask the AI to format its answers using Markdown standard prefixes:</p>
+        <h2><svg class="icon"><use href="#icon-terminal"/></svg> Formatting Responses</h2>
+        <p>Use standard Markdown headings to direct code structure:</p>
         <ul>
           <li><code># Text</code> — Renders a prominent <strong>Heading 1</strong> (Yellow)</li>
           <li><code>## Text</code> — Renders a <strong>Heading 2</strong> sub-header (Mango Orange)</li>
@@ -283,15 +372,6 @@
           <li><code>```luau ... ```</code> — Renders an interactive code snippet with a copy button.</li>
         </ul>
         <div class="syntax-box">Example Prompt: "## Explain how task.spawn works in Luau with an example"</div>
-      </div>
-
-      <div class="doc-section">
-        <h2>## Recommended Luau Prompts</h2>
-        <ul>
-          <li><code># Write a Daily Reward DataStore script</code></li>
-          <li><code>## Create a raycast gun shooting framework for LocalScript</code></li>
-          <li><code># How do I fix Memory Leaks with Maid/Janitor patterns?</code></li>
-        </ul>
       </div>
     </section>
   </main>
@@ -309,60 +389,83 @@
   </div>
 
   <script>
-    // Credits State
+    // App State Management
     let isInfinite = localStorage.getItem("mango_infinite") === "true";
     let credits = localStorage.getItem("mango_credits") !== null ? parseInt(localStorage.getItem("mango_credits")) : 1000;
+    let history = JSON.parse(localStorage.getItem("mango_history") || "[]");
 
-    function updateCreditDisplay() {
+    function updateDashboard() {
+      // Credit counter update
       const display = document.getElementById("credit-count");
+      const dashCredits = document.getElementById("dash-credits");
+      const dashTier = document.getElementById("dash-tier");
+      const dashScriptCount = document.getElementById("dash-scripts-count");
+
       if (isInfinite) {
         display.textContent = "∞ Infinite";
+        dashCredits.textContent = "∞ Unlimited";
+        dashTier.textContent = "VIP Pro (Infinite)";
       } else {
         display.textContent = credits;
+        dashCredits.textContent = credits;
+        dashTier.textContent = "Free Tier";
+      }
+
+      dashScriptCount.textContent = history.length;
+
+      // Update History List in Dashboard
+      const historyList = document.getElementById("history-list");
+      if (history.length === 0) {
+        historyList.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9rem;">No scripts generated yet. Try asking MangoAI in the Scripting tab!</div>`;
+      } else {
+        historyList.innerHTML = history.slice().reverse().map(item => `
+          <div class="history-item">
+            <span class="prompt">${escapeHtml(item.prompt)}</span>
+            <span class="time">${item.timestamp}</span>
+          </div>
+        `).join('');
       }
     }
-    updateCreditDisplay();
+    updateDashboard();
 
-    // Tab Navigation Switcher
+    // Tab Switcher
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
 
+      const navBtns = document.querySelectorAll('.nav-btn');
       if (tabName === 'home') {
         document.getElementById('home-tab').classList.add('active');
-        document.querySelectorAll('.nav-btn')[0].classList.add('active');
+        navBtns[0].classList.add('active');
+      } else if (tabName === 'dashboard') {
+        document.getElementById('dashboard-tab').classList.add('active');
+        navBtns[1].classList.add('active');
+        updateDashboard();
       } else if (tabName === 'ai') {
         document.getElementById('ai-tab').classList.add('active');
-        document.querySelectorAll('.nav-btn')[1].classList.add('active');
+        navBtns[2].classList.add('active');
       } else if (tabName === 'docs') {
         document.getElementById('docs-tab').classList.add('active');
-        document.querySelectorAll('.nav-btn')[2].classList.add('active');
+        navBtns[3].classList.add('active');
       }
     }
 
     // Modal Controls
-    function openAuthModal() {
-      document.getElementById("auth-modal").style.display = "flex";
-    }
-    function closeAuthModal() {
-      document.getElementById("auth-modal").style.display = "none";
-    }
+    function openAuthModal() { document.getElementById("auth-modal").style.display = "flex"; }
+    function closeAuthModal() { document.getElementById("auth-modal").style.display = "none"; }
 
     function handleLogin() {
       const user = document.getElementById("auth-user").value.trim();
-      if (!user) {
-        alert("Please enter a username.");
-        return;
-      }
+      if (!user) { alert("Please enter a username."); return; }
       isInfinite = true;
       localStorage.setItem("mango_infinite", "true");
-      updateCreditDisplay();
-      document.getElementById("login-nav-btn").textContent = `👤 ${user} (Logged In)`;
+      document.getElementById("login-nav-btn").innerHTML = `<svg class="icon"><use href="#icon-user"/></svg> ${escapeHtml(user)}`;
+      updateDashboard();
       closeAuthModal();
       alert(`Welcome back, ${user}! You now have Infinite Credits! 🥭`);
     }
 
-    // Chat App Logic
+    // Chat Logic
     const c = document.getElementById("chat-container");
     const f = document.getElementById("input-form");
     const i = document.getElementById("user-input");
@@ -379,11 +482,14 @@
       c.scrollTop = c.scrollHeight;
     }
 
+    function escapeHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
     function parseMarkdown(text) {
-      return text
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      return escapeHtml(text)
         .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        .replace(/^## (.*$)/gim, '<h2>$2</h2>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
         .replace(/^### (.*$)/gim, '<h3>$1</h3>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/```(lua|luau)?([\s\S]*?)```/g, (_, __, code) => {
@@ -400,7 +506,6 @@
     f.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // Check credit balance before proceeding
       if (!isInfinite && credits < 50) {
         alert("You do not have enough credits! Code generation costs 50 credits. Log in to unlock infinite credits.");
         openAuthModal();
@@ -410,12 +515,15 @@
       const p = i.value.trim();
       if (!p) return;
 
-      // Deduct 50 credits if not infinite
       if (!isInfinite) {
         credits -= 50;
         localStorage.setItem("mango_credits", credits);
-        updateCreditDisplay();
       }
+
+      // Record to history dashboard
+      history.push({ prompt: p, timestamp: new Date().toLocaleTimeString() });
+      localStorage.setItem("mango_history", JSON.stringify(history));
+      updateDashboard();
 
       appendMessage(p, "user");
       i.value = "";
